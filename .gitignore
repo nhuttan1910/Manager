@@ -1,0 +1,9 @@
+# Môi trường & cache
+.venv/
+__pycache__/
+*.pyc
+
+# Dữ liệu cá nhân và bí mật — KHÔNG đẩy lên GitHub
+data/
+*.db
+.streamlit/secrets.toml
