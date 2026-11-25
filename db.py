@@ -92,9 +92,11 @@ def _database_url() -> str:
         pass
     url = url or os.environ.get("DATABASE_URL")
     if url:
-        # Supabase/Heroku đôi khi đưa ra dạng postgres://
-        if url.startswith("postgres://"):
-            url = "postgresql://" + url[len("postgres://") :]
+        # Chỉ định rõ driver psycopg (v3); chấp nhận cả dạng postgres:// của Supabase/Heroku
+        for prefix in ("postgres://", "postgresql://"):
+            if url.startswith(prefix):
+                url = "postgresql+psycopg://" + url[len(prefix) :]
+                break
         return url
     data_dir = Path(__file__).parent / "data"
     data_dir.mkdir(exist_ok=True)
