@@ -30,13 +30,14 @@ def prev_month(year: int, month: int) -> tuple[int, int]:
 def month_picker(key: str) -> tuple[int, int]:
     """Hai ô chọn tháng / năm, mặc định là tháng hiện tại."""
     today = date.today()
-    c1, c2, _ = st.columns([1, 1, 3])
+    c1, c2 = st.columns(2)
     month = c1.selectbox(
         "Tháng", list(range(1, 13)), index=today.month - 1, key=f"{key}_m",
-        format_func=lambda m: f"Tháng {m}",
+        format_func=lambda m: f"Tháng {m}", label_visibility="collapsed",
     )
     years = list(range(today.year - 5, today.year + 2))
-    year = c2.selectbox("Năm", years, index=years.index(today.year), key=f"{key}_y")
+    year = c2.selectbox("Năm", years, index=years.index(today.year), key=f"{key}_y",
+                        label_visibility="collapsed")
     return year, month
 
 
@@ -86,26 +87,12 @@ def budget_status(year: int, month: int, expenses: pd.DataFrame | None = None) -
     return lines
 
 
-def render_budget_lines(lines: list[BudgetLine], year: int, month: int) -> None:
-    """Thanh tiến độ + cảnh báo cho từng dòng ngân sách."""
+def days_left_in(year: int, month: int) -> int:
+    """Số ngày còn lại (tính cả hôm nay) nếu là tháng hiện tại, ngược lại 0."""
     today = date.today()
-    is_current = (year, month) == (today.year, today.month)
-    days_left = calendar.monthrange(year, month)[1] - today.day + 1 if is_current else 0
-
-    for line in lines:
-        icon = {"ok": "🟢", "warn": "🟠", "over": "🔴"}[line.level]
-        st.markdown(
-            f"{icon} **{line.name}** — {fmt_vnd(line.spent)} / {fmt_vnd(line.budget)} "
-            f"({line.ratio:.0%})"
-        )
-        st.progress(min(line.ratio, 1.0))
-        if line.level == "over":
-            st.error(f"Đã vượt ngân sách **{line.name}** {fmt_vnd(-line.remaining)}.", icon="🚨")
-        elif line.level == "warn":
-            msg = f"Sắp chạm ngân sách **{line.name}**: còn {fmt_vnd(line.remaining)}"
-            if days_left:
-                msg += f" cho {days_left} ngày (~{fmt_vnd(line.remaining / days_left)}/ngày)"
-            st.warning(msg + ".", icon="⚠️")
+    if (year, month) != (today.year, today.month):
+        return 0
+    return calendar.monthrange(year, month)[1] - today.day + 1
 
 
 def category_options(ctype: str) -> dict[int, str]:

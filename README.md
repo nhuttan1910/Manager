@@ -16,9 +16,15 @@
 app.py              # điểm vào: đăng nhập + menu
 db.py               # bảng dữ liệu và các hàm đọc/ghi (SQLAlchemy)
 utils.py            # định dạng tiền, tính ngân sách
+ui.py               # CSS, thẻ số liệu, thẻ ngân sách, icon danh mục, style biểu đồ
+routes.py           # sổ đăng ký trang (để tạo link giữa các trang)
 views/              # mỗi trang một file
   dashboard.py  transactions.py  reports.py  budgets.py  categories.py
+assets/             # logo
+.streamlit/config.toml  # theme sáng/tối, font Be Vietnam Pro
 ```
+
+Đổi màu/font: sửa `.streamlit/config.toml`. Đổi icon danh mục: sửa `CATEGORY_ICONS` trong `ui.py`.
 
 Dữ liệu lưu ở đâu được quyết định bởi `DATABASE_URL`:
 
